@@ -8,6 +8,9 @@ export default function Home() {
   const [participantes, setParticipantes] = useState([]);
   const [nombre, setNombre] = useState("");
   const [contacto, setContacto] = useState("");
+  const [nombreError, setNombreError] = useState(false);
+  const [correoError, setCorreoError] = useState(false);
+
 
   // Mezclar los nombres
   function mezclar(array) {
@@ -23,24 +26,38 @@ export default function Home() {
     }
     return array;
   }
-
+  // Agregar participante
   function agregarParticipante(e) {
     e.preventDefault();
+
     if (participantes.some((p) => p.nombre === nombre)) {
       alert("El nombre ya existe. Por favor, introduce un nombre único.");
+      setNombreError(true);
       return;
+    } else {
+      setNombreError(false);
     }
+
+    if (!/\S+@\S+\.\S+/.test(contacto)) {
+      alert("Por favor, introduce un correo electrónico válido.");
+      setCorreoError(true);
+      return;
+    } else {
+      setCorreoError(false);
+    }
+
     setParticipantes((prev) => [...prev, { nombre, contacto }]);
     setNombre("");
     setContacto("");
   }
 
+  // Eliminar participante
   function eliminarParticipante(participanteParaEliminar) {
     setParticipantes((prev) =>
       prev.filter((participante) => participante !== participanteParaEliminar)
     );
   }
-
+  // Realizar sorteo
   async function realizarSorteo() {
     if (participantes.length < 2) {
       alert("Se necesitan al menos 2 participantes para el sorteo.");
@@ -54,7 +71,7 @@ export default function Home() {
       await enviarCorreo(participantes[i].contacto, `A ${participantes[i].nombre} le tocó ${amigoSecreto.nombre}.`);
     }
   }
-
+  // Enviar correos
   async function enviarCorreo(email, mensaje) {
     const response = await fetch('/api/enviarCorreo', {
       method: 'POST',
@@ -63,18 +80,36 @@ export default function Home() {
       },
       body: JSON.stringify({ email, mensaje }),
     });
-
+  
+    // Obtén el cuerpo de la respuesta
+    const responseBody = await response.json();
+  
     if (!response.ok) {
-      throw new Error('Ocurrió un error al enviar el correo');
+      // Imprime el cuerpo de la respuesta antes de lanzar el error
+      console.error('Error en la respuesta del servidor:', responseBody);
+      throw new Error('Hay un error al enviar el correo');
     }
   }
 
   return (
     <div>
-      <Typography variant="h1">Bro Invisible</Typography>
+      <Typography variant="h4">Bro Invisible</Typography>
       <form onSubmit={agregarParticipante}>
-        <TextField value={nombre} onChange={(e) => setNombre(e.target.value)} placeholder="Nombre" required />
-        <TextField value={contacto} onChange={(e) => setContacto(e.target.value)} placeholder="Contacto (Email)" required />
+        <TextField
+          error={nombreError}
+          value={nombre}
+          onChange={(e) => { setNombre(e.target.value); setNombreError(false); }}
+          placeholder="Nombre"
+          required
+        />{" "}
+        <TextField
+          error={correoError}
+          value={contacto}
+          onChange={(e) => { setContacto(e.target.value); setCorreoError(false); }}
+          placeholder="Contacto (Email)"
+          required
+        />
+
         <Button type="submit">Agregar Participante</Button>
       </form>
       {participantes.map((participante) => (
