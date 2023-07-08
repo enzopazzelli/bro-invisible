@@ -63,12 +63,18 @@ export default function Home() {
       alert("Se necesitan al menos 2 participantes para el sorteo.");
       return;
     }
-
+  
     let mezclado = mezclar([...participantes]);
+  
+    // Asegurarse de que a nadie le toque él mismo
+    while (mezclado.some((valor, indice) => valor === participantes[indice])) {
+      mezclado = mezclar([...participantes]);
+    }
+  
     for (let i = 0; i < participantes.length; i++) {
-      let amigoSecreto = i === participantes.length - 1 ? mezclado[0] : mezclado[i + 1];
+      let amigoSecreto = mezclado[i];
       participantes[i].amigoSecreto = amigoSecreto.nombre;
-      await enviarCorreo(participantes[i].contacto, `A ${participantes[i].nombre} le tocó ${amigoSecreto.nombre}.`);
+      await enviarCorreo(participantes[i].contacto, `El amigo invisible de ${participantes[i].nombre} es: ${amigoSecreto.nombre}.`);
     }
   }
   // Enviar correos
