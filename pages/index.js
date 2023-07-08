@@ -76,6 +76,12 @@ export default function Home() {
       participantes[i].amigoSecreto = amigoSecreto.nombre;
       await enviarCorreo(participantes[i].contacto, `El amigo invisible de ${participantes[i].nombre} es: ${amigoSecreto.nombre}.`);
     }
+
+     // Después de enviar los correos, limpiar el estado de participantes
+     setParticipantes([]);
+
+     // Mostrar una alerta
+     alert("El sorteo se ha realizado con éxito y todos los participantes han recibido su amigo invisible al mail.");
   }
   // Enviar correos
   async function enviarCorreo(email, mensaje) {
