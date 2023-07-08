@@ -115,30 +115,47 @@ export default function Home() {
         backgroundSize: 'cover',
       }}
     >
-      <Login />
-      <Typography variant="h4">Bro Invisible</Typography>
-      <form onSubmit={agregarParticipante}>
-        <TextField
-          error={nombreError}
-          value={nombre}
-          onChange={(e) => { setNombre(e.target.value); setNombreError(false); }}
-          placeholder="Nombre"
-          required
-        />{" "}
-        <TextField
-          error={correoError}
-          value={contacto}
-          onChange={(e) => { setContacto(e.target.value); setCorreoError(false); }}
-          placeholder="Contacto (Email)"
-          required
-        />
-
-        <Button type="submit">Agregar Participante</Button>
-      </form>
-      {participantes.map((participante) => (
-        <Participante key={participante.nombre} participante={participante} onDelete={eliminarParticipante} />
-      ))}
-      <Button onClick={realizarSorteo}>Realizar Sorteo</Button>
-      </Box>
+      {user ? (
+        // Usuario autenticado, mostrar contenido de la aplicación
+        <div>
+          <Typography variant="h4">Bro Invisible</Typography>
+          <form onSubmit={agregarParticipante}>
+            <TextField
+              error={nombreError}
+              value={nombre}
+              onChange={(e) => {
+                setNombre(e.target.value);
+                setNombreError(false);
+              }}
+              placeholder="Nombre"
+              required
+            />
+            <TextField
+              error={correoError}
+              value={contacto}
+              onChange={(e) => {
+                setContacto(e.target.value);
+                setCorreoError(false);
+              }}
+              placeholder="Contacto (Email)"
+              required
+            />
+            <Button type="submit">Agregar Participante</Button>
+          </form>
+          {participantes.map((participante) => (
+            <div key={participante.nombre}>
+              {/* Renderizar cada participante */}
+            </div>
+          ))}
+          <Button onClick={realizarSorteo}>Realizar Sorteo</Button>
+        </div>
+      ) : (
+        // Usuario no autenticado, mostrar formulario de inicio de sesión y registro
+        <div>
+          <Login onLogin={setUser} />
+          <Registro onRegistro={setUser} />
+        </div>
+      )}
+    </Box>
   );
 }
