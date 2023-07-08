@@ -1,15 +1,18 @@
 "use client"
 
 import React, { useState } from 'react';
+import Login from '@/components/Login';
 import { Button, TextField, Typography } from '@mui/material';
+import { Box } from '@mui/system';
 import Participante from '@/components/Participantes'
 
 export default function Home() {
   const [participantes, setParticipantes] = useState([]);
-  const [nombre, setNombre] = useState("");
-  const [contacto, setContacto] = useState("");
+  const [nombre, setNombre] = useState('');
+  const [contacto, setContacto] = useState('');
   const [nombreError, setNombreError] = useState(false);
   const [correoError, setCorreoError] = useState(false);
+  const [user, setUser] = useState(null);
 
 
   // Mezclar los nombres
@@ -104,7 +107,15 @@ export default function Home() {
   }
 
   return (
-    <div>
+    <Box
+      sx={{
+        minHeight: '100vh',
+        backgroundImage: `url(https://www.automotivacion.net/wp-content/uploads/2013/09/los-ninos-y-la-amistad_zvr39.jpg)`,
+        backgroundRepeat: 'no-repeat',
+        backgroundSize: 'cover',
+      }}
+    >
+      <Login />
       <Typography variant="h4">Bro Invisible</Typography>
       <form onSubmit={agregarParticipante}>
         <TextField
@@ -128,6 +139,6 @@ export default function Home() {
         <Participante key={participante.nombre} participante={participante} onDelete={eliminarParticipante} />
       ))}
       <Button onClick={realizarSorteo}>Realizar Sorteo</Button>
-    </div>
+      </Box>
   );
 }
